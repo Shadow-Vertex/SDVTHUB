@@ -9,7 +9,7 @@ local KeyWindow = Rayfield:CreateWindow({
     Name = "🔑 SDVT Hub Key System",
     LoadingTitle = "Enter Key",
     LoadingSubtitle = "Key Required",
-    ConfigurationSaving = { Enabled = false }
+    ConfigurationSaving = { Enabled = true }
 })
 
 local KeyTab = KeyWindow:CreateTab("Key", "lock")
