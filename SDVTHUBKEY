@@ -1,0 +1,66 @@
+
+-- 🌱 Plant Vs Brainrot | SDVT Hub (Rayfield + Key System + Flash)
+-- Key: SDVTSCRIPT
+
+-- ⚡ Load Rayfield
+local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
+
+-- Key Window
+local KeyWindow = Rayfield:CreateWindow({
+    Name = "🔑 SDVT Hub Key System",
+    LoadingTitle = "Enter Key",
+    LoadingSubtitle = "Key Required",
+    ConfigurationSaving = { Enabled = false } -- ❌ Không lưu key
+})
+
+local KeyTab = KeyWindow:CreateTab("Key", "lock")
+
+local correctKey = "SDVTSCRIPT"
+local enteredKey = ""
+
+KeyTab:CreateInput({
+    Name = "Enter Key",
+    PlaceholderText = "Type your key here...",
+    RemoveTextAfterFocusLost = false,
+    Callback = function(text)
+        enteredKey = text
+    end
+})
+
+KeyTab:CreateButton({
+    Name = "Submit Key",
+    Callback = function()
+        if enteredKey == correctKey then
+            warn("✅ Correct Key!")
+            
+            -- ⚡ Hiệu ứng chớp tắt màn hình 3s
+            local PlayerGui = game:GetService("Players").LocalPlayer:WaitForChild("PlayerGui")
+            local flashGui = Instance.new("ScreenGui")
+            flashGui.IgnoreGuiInset = true
+            flashGui.ResetOnSpawn = false
+            flashGui.Parent = PlayerGui
+
+            local flashFrame = Instance.new("Frame")
+            flashFrame.Size = UDim2.new(1, 0, 1, 0)
+            flashFrame.BackgroundColor3 = Color3.new(1, 1, 1)
+            flashFrame.BackgroundTransparency = 1
+            flashFrame.Parent = flashGui
+
+            task.spawn(function()
+                for i = 1, 6 do -- chớp 6 lần ~ 3s
+                    flashFrame.BackgroundTransparency = 0
+                    task.wait(0.25)
+                    flashFrame.BackgroundTransparency = 1
+                    task.wait(0.25)
+                end
+                flashGui:Destroy()
+
+                -- Load Main Script sau khi nhập đúng key
+                loadstring(game:HttpGet("https://raw.githubusercontent.com/Shadow-Vertex/SDVTHUB/refs/heads/main/SDVTHUB"))()
+            end)
+        else
+            warn("❌ Wrong Key!")
+        end
+    end
+})
+
