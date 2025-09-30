@@ -1,4 +1,3 @@
-```lua
 -- 🌱 Plant Vs Brainrot | SDVT Hub (Rayfield Version) --
 -- Auto: Seeds, Collect, Gear + Saving + Auto Load Config
 
@@ -252,4 +251,3 @@ UIS.InputChanged:Connect(function(input)
 end)
 
 warn("✅ SDVT Rayfield Script loaded! (Auto save + auto run)")
-```
