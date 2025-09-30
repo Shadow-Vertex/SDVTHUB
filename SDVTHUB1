@@ -1,5 +1,6 @@
--- 🌱 Plant Vs Brainrot | SDVT Hub (Rayfield Version)
--- Auto script: Seeds, Collect, Gear
+```lua
+-- 🌱 Plant Vs Brainrot | SDVT Hub (Rayfield Version) --
+-- Auto: Seeds, Collect, Gear + Saving + Auto Load Config
 
 -- 🔧 Load Rayfield
 local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
@@ -9,25 +10,33 @@ local Window = Rayfield:CreateWindow({
     Name = "🌱 Plant Vs Brainrot",
     LoadingTitle = "SDVT Hub",
     LoadingSubtitle = "Auto Script",
-    ConfigurationSaving = { Enabled = true }
+    ConfigurationSaving = {
+        Enabled = true,
+        FolderName = "SDVT",
+        FileName = "SAVINGSDVTSCRIPT"
+    }
 })
 
--- Services
+-- Tự động load file save khi script chạy
+pcall(function()
+    Rayfield:LoadConfiguration()
+    warn("✅ Auto loaded SAVINGSDVTSCRIPT config!")
+end)
+
+-- ========================
+-- Các Tab và tính năng
+-- ========================
 local Players = game:GetService("Players")
 local player = Players.LocalPlayer
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Remotes = ReplicatedStorage:WaitForChild("Remotes", 10)
 
--- ========================
--- Tab 1: Info
--- ========================
+-- Tab Info
 local InfoTab = Window:CreateTab("Info", "info")
-
 InfoTab:CreateParagraph({
     Title = "Welcome!",
     Content = "🌱 Plant Vs Brainrot\nMade by SDVT Team.\nEnjoy your script!"
 })
-
 InfoTab:CreateButton({
     Name = "Discord Invite",
     Callback = function()
@@ -36,11 +45,8 @@ InfoTab:CreateButton({
     end
 })
 
--- ========================
--- Tab 2: Auto Buy Seeds
--- ========================
+-- Tab Auto Buy Seeds
 local ShopTab = Window:CreateTab("Auto Buy Seeds", "shopping-bag")
-
 local buyDelay = 0.3
 ShopTab:CreateSlider({
     Name = "Buy Delay (s)",
@@ -48,15 +54,16 @@ ShopTab:CreateSlider({
     Increment = 0.01,
     Suffix = "s",
     CurrentValue = buyDelay,
+    Flag = "BuyDelay",
     Callback = function(v) buyDelay = v end
 })
-
 local autoBuy = {}
 local function AddSeedToggle(seedName, displayName)
     autoBuy[seedName] = false
     ShopTab:CreateToggle({
         Name = displayName,
         CurrentValue = false,
+        Flag = "Seed_" .. seedName,
         Callback = function(state)
             autoBuy[seedName] = state
             if state then
@@ -74,7 +81,6 @@ local function AddSeedToggle(seedName, displayName)
         end
     })
 end
-
 AddSeedToggle("Watermelon Seed", "Watermelon")
 AddSeedToggle("Grape Seed", "Grape")
 AddSeedToggle("Cocotank Seed", "Cocotank")
@@ -83,11 +89,8 @@ AddSeedToggle("Mr Carrot Seed", "Mr Carrot")
 AddSeedToggle("Tomatrio Seed", "Tomatrio")
 AddSeedToggle("Shroombino Seed", "Shroombino")
 
--- ========================
--- Tab 3: Auto Collect
--- ========================
+-- Tab Auto Collect
 local CollectTab = Window:CreateTab("Auto Collect", "dollar-sign")
-
 local collectDelay = 3
 CollectTab:CreateSlider({
     Name = "Collect Delay (s)",
@@ -95,13 +98,14 @@ CollectTab:CreateSlider({
     Increment = 1,
     Suffix = "s",
     CurrentValue = collectDelay,
+    Flag = "CollectDelay",
     Callback = function(v) collectDelay = v end
 })
-
 local autoCollect = false
 CollectTab:CreateToggle({
     Name = "Auto Collect Money",
     CurrentValue = false,
+    Flag = "AutoCollect",
     Callback = function(state)
         autoCollect = state
         if state then
@@ -119,11 +123,8 @@ CollectTab:CreateToggle({
     end
 })
 
--- ========================
--- Tab 4: Buy Shop Gear
--- ========================
+-- Tab Buy Gear
 local GearTab = Window:CreateTab("Buy Shop Gear", "shopping-cart")
-
 local gearDelay = 0.3
 GearTab:CreateSlider({
     Name = "⏱ Gear Buy Delay (s)",
@@ -131,15 +132,16 @@ GearTab:CreateSlider({
     Increment = 0.01,
     Suffix = "s",
     CurrentValue = gearDelay,
+    Flag = "GearDelay",
     Callback = function(v) gearDelay = v end
 })
-
 local autoBuyGear = {}
 local function AddGearToggle(gearName, displayName)
     autoBuyGear[gearName] = false
     GearTab:CreateToggle({
         Name = displayName or gearName,
         CurrentValue = false,
+        Flag = "Gear_" .. gearName,
         Callback = function(state)
             autoBuyGear[gearName] = state
             if state then
@@ -157,26 +159,19 @@ local function AddGearToggle(gearName, displayName)
         end
     })
 end
-
--- Gear list
 AddGearToggle("Water Bucket", "Water Bucket")
 AddGearToggle("Frost Grenade", "Frost Grenade")
 AddGearToggle("Banana Gun", "Banana Gun")
 AddGearToggle("Frost Blower", "Frost Blower")
 
--- ========================
--- Tab 5: Fix Lag
--- ========================
+-- Tab Fix Lag
 local FixLagTab = Window:CreateTab("Fix Lag", "zap")
-
 FixLagTab:CreateButton({
     Name = "✨ Fix Lag",
     Callback = function()
-        -- Đợi character load xong
         local character = player.Character or player.CharacterAdded:Wait()
         local root = character:WaitForChild("HumanoidRootPart")
 
-        -- Tạo Part
         local fixPart = Instance.new("Part")
         fixPart.Name = "LagFixPart"
         fixPart.Size = Vector3.new(2, 2, 2)
@@ -184,16 +179,14 @@ FixLagTab:CreateButton({
         fixPart.Anchored = true
         fixPart.CanCollide = false
         fixPart.Transparency = 0.5
-        fixPart.Color = Color3.fromRGB(255, 255, 200) -- Vàng sáng
+        fixPart.Color = Color3.fromRGB(255, 255, 200)
 
-        -- PointLight (phát sáng)
         local glow = Instance.new("PointLight")
         glow.Brightness = 3
         glow.Range = 15
         glow.Color = Color3.fromRGB(255, 255, 150)
         glow.Parent = fixPart
 
-        -- ParticleEmitter (hiệu ứng bụi sáng - tùy chọn)
         local particle = Instance.new("ParticleEmitter")
         particle.LightEmission = 1
         particle.LightInfluence = 1
@@ -205,15 +198,11 @@ FixLagTab:CreateButton({
         particle.Parent = fixPart
 
         fixPart.Parent = workspace
-
-        -- Bay lên cao trong 1 giây
         game:GetService("TweenService"):Create(
             fixPart,
             TweenInfo.new(1, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
             { Position = fixPart.Position + Vector3.new(0, 50, 0) }
         ):Play()
-
-        -- Xóa sau 1.2 giây
         task.delay(1.2, function()
             if fixPart and fixPart.Parent then
                 fixPart:Destroy()
@@ -222,9 +211,7 @@ FixLagTab:CreateButton({
     end
 })
 
--- ========================
 -- Mobile Toggle Button
--- ========================
 local UIS = game:GetService("UserInputService")
 local mobileGui = Instance.new("ScreenGui")
 mobileGui.Name = "SDVT_MobileBtn"
@@ -240,12 +227,9 @@ btn.Font = Enum.Font.SourceSansBold
 btn.TextSize = 18
 btn.Text = "🌱 Menu"
 btn.Parent = mobileGui
-
 btn.MouseButton1Click:Connect(function()
     Rayfield:SetVisibility(not Rayfield:IsVisible())
 end)
-
--- Drag move
 local dragging, dragStart, startPos
 btn.InputBegan:Connect(function(input)
     if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
@@ -267,4 +251,5 @@ UIS.InputChanged:Connect(function(input)
     end
 end)
 
-warn("✅ SDVT Rayfield Script loaded! Use 🌱 Menu button to toggle UI.")
+warn("✅ SDVT Rayfield Script loaded! (Auto save + auto run)")
+```
