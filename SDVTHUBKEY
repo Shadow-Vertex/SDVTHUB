@@ -71,10 +71,10 @@ KeyTab:CreateButton({
                 end
             end)
         else
-            warn("❌ Invalid Key! Must be 'SDVTSCRIPT' or 12 digits.")
+            warn("❌ Invalid Key! ")
             Rayfield:Notify({
                 Title = "Invalid Key",
-                Content = "Key phải là 'SDVTSCRIPT' hoặc gồm đúng 12 chữ số.",
+                Content = "❌ Invalid Key! .",
                 Duration = 4,
                 Image = 4483362458
             })
@@ -90,7 +90,7 @@ KeyTab:CreateButton({
         setclipboard(url)
         Rayfield:Notify({
             Title = "🔗 Get Key",
-            Content = "Link đã được sao chép! Hoàn thành nhiệm vụ trên web để nhận key 12 số.",
+            Content = "Link đã được sao chép!.",
             Duration = 6,
             Image = 4483362458
         })
