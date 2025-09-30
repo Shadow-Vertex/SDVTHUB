@@ -1,4 +1,4 @@
-```lua
+
 -- 🌱 Plant Vs Brainrot | SDVT Hub (Auto Save & Auto Load Config) --
 -- ✅ Auto chạy khi vào game + Tự lưu đám mây (Rayfield Config)
 
@@ -9,11 +9,7 @@ end
 task.wait(2)
 
 -- 🔧 Load Rayfield
-local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield
-```
-
-```lua
-'))()
+local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
 
 -- Main Window
 local Window = Rayfield:CreateWindow({
@@ -155,4 +151,4 @@ FixLagTab:CreateButton({
         fixPart.Parent = workspace
     end
 })
-```
+
