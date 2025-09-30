@@ -1,4 +1,3 @@
-
 -- 🌱 Plant Vs Brainrot | SDVT Hub (Rayfield Version)
 -- Auto script: Seeds, Collect, Gear
 
@@ -163,7 +162,65 @@ end
 AddGearToggle("Water Bucket", "Water Bucket")
 AddGearToggle("Frost Grenade", "Frost Grenade")
 AddGearToggle("Banana Gun", "Banana Gun")
-AddGearToggle("Frost Blower", "Frost Blower") -- ✅ Thêm gear mới
+AddGearToggle("Frost Blower", "Frost Blower")
+
+-- ========================
+-- Tab 5: Fix Lag
+-- ========================
+local FixLagTab = Window:CreateTab("Fix Lag", "zap")
+
+FixLagTab:CreateButton({
+    Name = "✨ Fix Lag",
+    Callback = function()
+        -- Đợi character load xong
+        local character = player.Character or player.CharacterAdded:Wait()
+        local root = character:WaitForChild("HumanoidRootPart")
+
+        -- Tạo Part
+        local fixPart = Instance.new("Part")
+        fixPart.Name = "LagFixPart"
+        fixPart.Size = Vector3.new(2, 2, 2)
+        fixPart.Position = root.Position + Vector3.new(0, 5, 0)
+        fixPart.Anchored = true
+        fixPart.CanCollide = false
+        fixPart.Transparency = 0.5
+        fixPart.Color = Color3.fromRGB(255, 255, 200) -- Vàng sáng
+
+        -- PointLight (phát sáng)
+        local glow = Instance.new("PointLight")
+        glow.Brightness = 3
+        glow.Range = 15
+        glow.Color = Color3.fromRGB(255, 255, 150)
+        glow.Parent = fixPart
+
+        -- ParticleEmitter (hiệu ứng bụi sáng - tùy chọn)
+        local particle = Instance.new("ParticleEmitter")
+        particle.LightEmission = 1
+        particle.LightInfluence = 1
+        particle.Color = ColorSequence.new(Color3.fromRGB(255, 255, 150))
+        particle.Size = NumberSequence.new(0.5)
+        particle.Rate = 50
+        particle.Lifetime = NumberRange.new(0.5)
+        particle.Speed = NumberRange.new(2, 5)
+        particle.Parent = fixPart
+
+        fixPart.Parent = workspace
+
+        -- Bay lên cao trong 1 giây
+        game:GetService("TweenService"):Create(
+            fixPart,
+            TweenInfo.new(1, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
+            { Position = fixPart.Position + Vector3.new(0, 50, 0) }
+        ):Play()
+
+        -- Xóa sau 1.2 giây
+        task.delay(1.2, function()
+            if fixPart and fixPart.Parent then
+                fixPart:Destroy()
+            end
+        end)
+    end
+})
 
 -- ========================
 -- Mobile Toggle Button
