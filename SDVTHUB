@@ -1,5 +1,12 @@
--- 🌱 Plant Vs Brainrot | SDVT Hub (Rayfield Version) --
--- Auto: Seeds, Collect, Gear + Saving + Auto Load Config
+
+-- 🌱 Plant Vs Brainrot | SDVT Hub (Rayfield Auto Run Full Script) --
+-- ✅ Khi vào game: Auto chạy script + Auto Load Config
+
+-- Chờ game load
+if not game:IsLoaded() then
+    game.Loaded:Wait()
+end
+task.wait(2)
 
 -- 🔧 Load Rayfield
 local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
@@ -16,14 +23,23 @@ local Window = Rayfield:CreateWindow({
     }
 })
 
--- Tự động load file save khi script chạy
+-- Auto load config khi script chạy
 pcall(function()
     Rayfield:LoadConfiguration()
     warn("✅ Auto loaded SAVINGSDVTSCRIPT config!")
 end)
 
+-- Hiện thông báo để confirm
+pcall(function()
+    game:GetService("StarterGui"):SetCore("SendNotification", {
+        Title = "SDVT Hub",
+        Text = "🌱 Auto Script Loaded & Config Restored!",
+        Duration = 5
+    })
+end)
+
 -- ========================
--- Các Tab và tính năng
+-- FULL SCRIPT (Auto Seeds, Auto Collect, Auto Gear, Fix Lag)
 -- ========================
 local Players = game:GetService("Players")
 local player = Players.LocalPlayer
@@ -200,54 +216,9 @@ FixLagTab:CreateButton({
         game:GetService("TweenService"):Create(
             fixPart,
             TweenInfo.new(1, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
-            { Position = fixPart.Position + Vector3.new(0, 50, 0) }
+            { Position = fixPart.Position + Vector3.new(0, 10, 0) }
         ):Play()
-        task.delay(1.2, function()
-            if fixPart and fixPart.Parent then
-                fixPart:Destroy()
-            end
-        end)
+
+        warn("✅ Fix Lag Part Spawned!")
     end
 })
-
--- Mobile Toggle Button
-local UIS = game:GetService("UserInputService")
-local mobileGui = Instance.new("ScreenGui")
-mobileGui.Name = "SDVT_MobileBtn"
-mobileGui.ResetOnSpawn = false
-mobileGui.Parent = player:WaitForChild("PlayerGui")
-
-local btn = Instance.new("TextButton")
-btn.Size = UDim2.new(0, 110, 0, 42)
-btn.Position = UDim2.new(0.02, 0, 0.82, 0)
-btn.BackgroundColor3 = Color3.fromRGB(50, 150, 50)
-btn.TextColor3 = Color3.fromRGB(255, 255, 255)
-btn.Font = Enum.Font.SourceSansBold
-btn.TextSize = 18
-btn.Text = "🌱 Menu"
-btn.Parent = mobileGui
-btn.MouseButton1Click:Connect(function()
-    Rayfield:SetVisibility(not Rayfield:IsVisible())
-end)
-local dragging, dragStart, startPos
-btn.InputBegan:Connect(function(input)
-    if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
-        dragging = true
-        dragStart = input.Position
-        startPos = btn.Position
-        input.Changed:Connect(function()
-            if input.UserInputState == Enum.UserInputState.End then dragging = false end
-        end)
-    end
-end)
-UIS.InputChanged:Connect(function(input)
-    if input.UserInputType == Enum.UserInputType.MouseMovement and dragging then
-        local delta = input.Position - dragStart
-        btn.Position = UDim2.new(
-            startPos.X.Scale, startPos.X.Offset + delta.X,
-            startPos.Y.Scale, startPos.Y.Offset + delta.Y
-        )
-    end
-end)
-
-warn("✅ SDVT Rayfield Script loaded! (Auto save + auto run)")
