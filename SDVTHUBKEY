@@ -1,6 +1,5 @@
-
--- 🌱 Plant Vs Brainrot | SDVT Hub (Rayfield + Key System + Flash)
--- Key: SDVTSCRIPT
+-- 🌱 Plant Vs Brainrot | SDVT Hub (Rayfield + Flexible Key System)
+-- Key hợp lệ: "SDVTSCRIPT" HOẶC bất kỳ chuỗi 12 chữ số nào
 
 -- ⚡ Load Rayfield
 local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
@@ -10,12 +9,11 @@ local KeyWindow = Rayfield:CreateWindow({
     Name = "🔑 SDVT Hub Key System",
     LoadingTitle = "Enter Key",
     LoadingSubtitle = "Key Required",
-    ConfigurationSaving = { Enabled = false } -- ❌ Không lưu key
+    ConfigurationSaving = { Enabled = false }
 })
 
 local KeyTab = KeyWindow:CreateTab("Key", "lock")
 
-local correctKey = "SDVTSCRIPT"
 local enteredKey = ""
 
 KeyTab:CreateInput({
@@ -30,10 +28,14 @@ KeyTab:CreateInput({
 KeyTab:CreateButton({
     Name = "Submit Key",
     Callback = function()
-        if enteredKey == correctKey then
+        -- ✅ Kiểm tra: "SDVTSCRIPT" hoặc 12 chữ số
+        local isValid = (enteredKey == "SDVTSCRIPT") or 
+                        (tonumber(enteredKey) ~= nil and #enteredKey == 12 and enteredKey:match("^%d+$"))
+
+        if isValid then
             warn("✅ Correct Key!")
             
-            -- ⚡ Hiệu ứng chớp tắt màn hình 3s
+            -- ⚡ Flash effect
             local PlayerGui = game:GetService("Players").LocalPlayer:WaitForChild("PlayerGui")
             local flashGui = Instance.new("ScreenGui")
             flashGui.IgnoreGuiInset = true
@@ -47,7 +49,7 @@ KeyTab:CreateButton({
             flashFrame.Parent = flashGui
 
             task.spawn(function()
-                for i = 1, 6 do -- chớp 6 lần ~ 3s
+                for i = 1, 6 do
                     flashFrame.BackgroundTransparency = 0
                     task.wait(0.25)
                     flashFrame.BackgroundTransparency = 1
@@ -55,12 +57,42 @@ KeyTab:CreateButton({
                 end
                 flashGui:Destroy()
 
-                -- Load Main Script sau khi nhập đúng key
-                loadstring(game:HttpGet("https://raw.githubusercontent.com/Shadow-Vertex/SDVTHUB/refs/heads/main/SDVTHUB"))()
+                -- ✅ Load main script
+                local success, err = pcall(function()
+                    loadstring(game:HttpGet("https://raw.githubusercontent.com/Shadow-Vertex/SDVTHUB/refs/heads/main/SDVTHUB"))()
+                end)
+                if not success then
+                    Rayfield:Notify({
+                        Title = "Error",
+                        Content = "Failed to load main script.",
+                        Duration = 5,
+                        Image = 4483362458
+                    })
+                end
             end)
         else
-            warn("❌ Wrong Key!")
+            warn("❌ Invalid Key! Must be 'SDVTSCRIPT' or 12 digits.")
+            Rayfield:Notify({
+                Title = "Invalid Key",
+                Content = "Key phải là 'SDVTSCRIPT' hoặc gồm đúng 12 chữ số.",
+                Duration = 4,
+                Image = 4483362458
+            })
         end
     end
 })
 
+-- 🔑 Nút "Get Key" → mở trang web
+KeyTab:CreateButton({
+    Name = "🌐 Get Key from Web",
+    Callback = function()
+        local url = "https://bao760.github.io/hairobloxweb11/SDVTHUBKEY.html"
+        setclipboard(url)
+        Rayfield:Notify({
+            Title = "🔗 Get Key",
+            Content = "Link đã được sao chép! Hoàn thành nhiệm vụ trên web để nhận key 12 số.",
+            Duration = 6,
+            Image = 4483362458
+        })
+    end
+})
