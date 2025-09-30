@@ -1,0 +1,158 @@
+```lua
+-- 🌱 Plant Vs Brainrot | SDVT Hub (Auto Save & Auto Load Config) --
+-- ✅ Auto chạy khi vào game + Tự lưu đám mây (Rayfield Config)
+
+-- Chờ game load
+if not game:IsLoaded() then
+    game.Loaded:Wait()
+end
+task.wait(2)
+
+-- 🔧 Load Rayfield
+local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield
+```
+
+```lua
+'))()
+
+-- Main Window
+local Window = Rayfield:CreateWindow({
+    Name = "🌱 Plant Vs Brainrot",
+    LoadingTitle = "SDVT Hub",
+    LoadingSubtitle = "Auto Script",
+    ConfigurationSaving = {
+        Enabled = true,
+        FolderName = "SDVT",
+        FileName = "SAVINGSDVTSCRIPT",
+        JSONEncode = true
+    }
+})
+
+-- Auto load config khi script chạy
+pcall(function()
+    Rayfield:LoadConfiguration()
+    warn("✅ Auto loaded SAVINGSDVTSCRIPT config!")
+end)
+
+-- Notify confirm
+pcall(function()
+    game:GetService("StarterGui"):SetCore("SendNotification", {
+        Title = "SDVT Hub",
+        Text = "🌱 Auto Script Loaded & Cloud Config Restored!",
+        Duration = 5
+    })
+end)
+
+-- ========================
+-- Full Script với auto save/load
+-- ========================
+local Players = game:GetService("Players")
+local player = Players.LocalPlayer
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local Remotes = ReplicatedStorage:WaitForChild("Remotes", 10)
+
+-- Tab Auto Seeds
+local ShopTab = Window:CreateTab("Auto Buy Seeds", "shopping-bag")
+local autoBuy = {}
+local function AddSeedToggle(seedName, displayName)
+    ShopTab:CreateToggle({
+        Name = displayName,
+        CurrentValue = false,
+        Flag = "Seed_" .. seedName,
+        Callback = function(state)
+            autoBuy[seedName] = state
+            if state then
+                task.spawn(function()
+                    while autoBuy[seedName] do
+                        if Remotes and Remotes:FindFirstChild("BuyItem") then
+                            pcall(function()
+                                Remotes.BuyItem:FireServer(seedName)
+                            end)
+                        end
+                        task.wait(0.3)
+                    end
+                end)
+            end
+        end
+    })
+end
+AddSeedToggle("Watermelon Seed", "Watermelon")
+AddSeedToggle("Grape Seed", "Grape")
+AddSeedToggle("Cocotank Seed", "Cocotank")
+AddSeedToggle("Carnivorous Plant Seed", "Carnivorous Plant")
+AddSeedToggle("Mr Carrot Seed", "Mr Carrot")
+AddSeedToggle("Tomatrio Seed", "Tomatrio")
+AddSeedToggle("Shroombino Seed", "Shroombino")
+
+-- Tab Auto Collect
+local CollectTab = Window:CreateTab("Auto Collect", "dollar-sign")
+CollectTab:CreateToggle({
+    Name = "Auto Collect Money",
+    CurrentValue = false,
+    Flag = "AutoCollect",
+    Callback = function(state)
+        if state then
+            task.spawn(function()
+                while Rayfield.Flags["AutoCollect"].CurrentValue do
+                    if Remotes and Remotes:FindFirstChild("EquipBestBrainrots") then
+                        pcall(function()
+                            Remotes.EquipBestBrainrots:FireServer()
+                        end)
+                    end
+                    task.wait(3)
+                end
+            end)
+        end
+    end
+})
+
+-- Tab Buy Gear
+local GearTab = Window:CreateTab("Buy Shop Gear", "shopping-cart")
+local autoBuyGear = {}
+local function AddGearToggle(gearName, displayName)
+    GearTab:CreateToggle({
+        Name = displayName or gearName,
+        CurrentValue = false,
+        Flag = "Gear_" .. gearName,
+        Callback = function(state)
+            autoBuyGear[gearName] = state
+            if state then
+                task.spawn(function()
+                    while autoBuyGear[gearName] do
+                        if Remotes and Remotes:FindFirstChild("BuyGear") then
+                            pcall(function()
+                                Remotes.BuyGear:FireServer(gearName)
+                            end)
+                        end
+                        task.wait(0.3)
+                    end
+                end)
+            end
+        end
+    })
+end
+AddGearToggle("Water Bucket", "Water Bucket")
+AddGearToggle("Frost Grenade", "Frost Grenade")
+AddGearToggle("Banana Gun", "Banana Gun")
+AddGearToggle("Frost Blower", "Frost Blower")
+
+-- Tab Fix Lag
+local FixLagTab = Window:CreateTab("Fix Lag", "zap")
+FixLagTab:CreateButton({
+    Name = "✨ Fix Lag",
+    Callback = function()
+        local character = player.Character or player.CharacterAdded:Wait()
+        local root = character:WaitForChild("HumanoidRootPart")
+
+        local fixPart = Instance.new("Part")
+        fixPart.Name = "LagFixPart"
+        fixPart.Size = Vector3.new(2, 2, 2)
+        fixPart.Position = root.Position + Vector3.new(0, 5, 0)
+        fixPart.Anchored = true
+        fixPart.CanCollide = false
+        fixPart.Transparency = 0.5
+        fixPart.Color = Color3.fromRGB(255, 255, 200)
+        fixPart.Parent = workspace
+    end
+})
+```
