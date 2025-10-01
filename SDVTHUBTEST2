@@ -1,4 +1,4 @@
--- 🌱 Plant Vs Brainrot | SDVT Hub (Rayfield Auto Run Full) --
+-- 🌱 Plant Vs Brainrot | SDVT Hub (Rayfield Auto Run Full ON) --
 
 -- Chờ game load
 if not game:IsLoaded() then
@@ -19,10 +19,10 @@ local Window = Rayfield:CreateWindow({
     ConfigurationSaving = {
         Enabled = true,
         FolderName = "SDVT",
-        FileName = "SAVINGSDVTSCRIPT",
-        JSONEncode = true
+        FileName = "SAVINGSDVTSCRIPT"
     }
 })
+
 -- Auto load config
 pcall(function()
     Rayfield:LoadConfiguration()
@@ -89,14 +89,28 @@ local function AddSeedToggle(seedName, displayName, default)
             end
         end
     })
+
+    -- Auto bật ngay khi load game
+    if default then
+        task.spawn(function()
+            task.wait(1)
+            autoBuy[seedName] = true
+            while autoBuy[seedName] do
+                if Remotes and Remotes:FindFirstChild("BuyItem") then
+                    pcall(function()
+                        Remotes.BuyItem:FireServer(seedName)
+                    end)
+                end
+                task.wait(0.001)
+            end
+        end)
+    end
 end
 
--- Seeds off mặc định
-AddSeedToggle("Watermelon Seed", "Watermelon", false)
-AddSeedToggle("Grape Seed", "Grape", false)
-AddSeedToggle("Cocotank Seed", "Cocotank", false)
-
--- Seeds auto bật mặc định
+-- Seeds tất cả auto ON
+AddSeedToggle("Watermelon Seed", "Watermelon", true)
+AddSeedToggle("Grape Seed", "Grape", true)
+AddSeedToggle("Cocotank Seed", "Cocotank", true)
 AddSeedToggle("Carnivorous Plant Seed", "Carnivorous Plant", true)
 AddSeedToggle("Mr Carrot Seed", "Mr Carrot", true)
 AddSeedToggle("Tomatrio Seed", "Tomatrio", true)
@@ -116,10 +130,10 @@ CollectTab:CreateSlider({
     Callback = function(v) collectDelay = v end
 })
 
-local autoCollect = false
+local autoCollect = true
 CollectTab:CreateToggle({
     Name = "Auto Collect Money",
-    CurrentValue = false,
+    CurrentValue = true,
     Flag = "AutoCollect",
     Callback = function(state)
         autoCollect = state
@@ -137,6 +151,18 @@ CollectTab:CreateToggle({
         end
     end
 })
+
+-- Auto bật collect luôn khi load
+task.spawn(function()
+    while autoCollect do
+        if Remotes and Remotes:FindFirstChild("EquipBestBrainrots") then
+            pcall(function()
+                Remotes.EquipBestBrainrots:FireServer()
+            end)
+        end
+        task.wait(collectDelay)
+    end
+end)
 
 -- ========================
 -- Tab 4: Buy Shop Gear
@@ -165,13 +191,29 @@ local function AddGearToggle(gearName, displayName, default)
             end
         end
     })
+
+    -- Auto bật khi load
+    if default then
+        task.spawn(function()
+            task.wait(1)
+            autoBuyGear[gearName] = true
+            while autoBuyGear[gearName] do
+                if Remotes and Remotes:FindFirstChild("BuyGear") then
+                    pcall(function()
+                        Remotes.BuyGear:FireServer(unpack({gearName}))
+                    end)
+                end
+                task.wait(0.001)
+            end
+        end)
+    end
 end
 
--- Gear list
-AddGearToggle("Water Bucket", "Water Bucket", false)
-AddGearToggle("Frost Grenade", "Frost Grenade", false)
-AddGearToggle("Banana Gun", "Banana Gun", false)
-AddGearToggle("Frost Blower", "Frost Blower", false)
+-- Gear all auto ON
+AddGearToggle("Water Bucket", "Water Bucket", true)
+AddGearToggle("Frost Grenade", "Frost Grenade", true)
+AddGearToggle("Banana Gun", "Banana Gun", true)
+AddGearToggle("Frost Blower", "Frost Blower", true)
 
 -- ========================
 -- Tab 5: Fix Lag
@@ -261,4 +303,4 @@ UIS.InputChanged:Connect(function(input)
     end
 end)
 
-warn("✅ SDVT Rayfield Script loaded! Auto Save + Auto Load config active!")
+warn("✅ SDVT Rayfield Script loaded! Auto All Features Enabled!")
