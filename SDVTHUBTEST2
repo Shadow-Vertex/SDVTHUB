@@ -1,12 +1,11 @@
--- 🌱 Plant Vs Brainrot | SDVT Hub (Rayfield Auto Run Full ON) --
+-- 🌱 Plant Vs Brainrot | SDVT Hub (Rayfield Auto Run Seeds+Gear ON, Collect OFF) --
 
--- Chờ game load
 if not game:IsLoaded() then
     game.Loaded:Wait()
 end
 task.wait(2)
 
--- 🔧 Load Rayfield
+-- Load Rayfield
 local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
 
 -- ========================
@@ -23,13 +22,11 @@ local Window = Rayfield:CreateWindow({
     }
 })
 
--- Auto load config
 pcall(function()
     Rayfield:LoadConfiguration()
     warn("✅ Auto loaded SAVINGSDVTSCRIPT config!")
 end)
 
--- Auto save loop
 task.spawn(function()
     while task.wait(30) do
         pcall(function()
@@ -45,79 +42,61 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Remotes = ReplicatedStorage:WaitForChild("Remotes", 10)
 
 -- ========================
--- Tab 1: Info
+-- Info Tab
 -- ========================
 local InfoTab = Window:CreateTab("Info", "info")
-
 InfoTab:CreateParagraph({
     Title = "Welcome!",
     Content = "🌱 Plant Vs Brainrot\nMade by SDVT Team.\nEnjoy your script!"
 })
 
-InfoTab:CreateButton({
-    Name = "Discord Invite",
-    Callback = function()
-        setclipboard("https://discord.gg/sdvt")
-        warn("✅ Discord link copied to clipboard!")
-    end
-})
-
 -- ========================
--- Tab 2: Auto Buy Seeds
+-- Auto Buy Seeds (ALL ON)
 -- ========================
 local ShopTab = Window:CreateTab("Auto Buy Seeds", "shopping-bag")
 local autoBuy = {}
-local function AddSeedToggle(seedName, displayName, default)
-    autoBuy[seedName] = default or false
+local function AddSeedToggle(seedName, displayName)
+    autoBuy[seedName] = true
     ShopTab:CreateToggle({
         Name = displayName,
-        CurrentValue = default or false,
+        CurrentValue = true,
         Flag = "Seed_" .. seedName,
         Callback = function(state)
             autoBuy[seedName] = state
             if state then
                 task.spawn(function()
                     while autoBuy[seedName] do
-                        if Remotes and Remotes:FindFirstChild("BuyItem") then
-                            pcall(function()
-                                Remotes.BuyItem:FireServer(seedName)
-                            end)
-                        end
+                        pcall(function()
+                            Remotes.BuyItem:FireServer(seedName)
+                        end)
                         task.wait(0.001)
                     end
                 end)
             end
         end
     })
-
-    -- Auto bật ngay khi load game
-    if default then
-        task.spawn(function()
-            task.wait(1)
-            autoBuy[seedName] = true
-            while autoBuy[seedName] do
-                if Remotes and Remotes:FindFirstChild("BuyItem") then
-                    pcall(function()
-                        Remotes.BuyItem:FireServer(seedName)
-                    end)
-                end
-                task.wait(0.001)
-            end
-        end)
-    end
+    -- Auto bật
+    task.spawn(function()
+        task.wait(1)
+        while autoBuy[seedName] do
+            pcall(function()
+                Remotes.BuyItem:FireServer(seedName)
+            end)
+            task.wait(0.001)
+        end
+    end)
 end
 
--- Seeds tất cả auto ON
-AddSeedToggle("Watermelon Seed", "Watermelon", true)
-AddSeedToggle("Grape Seed", "Grape", true)
-AddSeedToggle("Cocotank Seed", "Cocotank", true)
-AddSeedToggle("Carnivorous Plant Seed", "Carnivorous Plant", true)
-AddSeedToggle("Mr Carrot Seed", "Mr Carrot", true)
-AddSeedToggle("Tomatrio Seed", "Tomatrio", true)
-AddSeedToggle("Shroombino Seed", "Shroombino", true)
+AddSeedToggle("Watermelon Seed", "Watermelon")
+AddSeedToggle("Grape Seed", "Grape")
+AddSeedToggle("Cocotank Seed", "Cocotank")
+AddSeedToggle("Carnivorous Plant Seed", "Carnivorous Plant")
+AddSeedToggle("Mr Carrot Seed", "Mr Carrot")
+AddSeedToggle("Tomatrio Seed", "Tomatrio")
+AddSeedToggle("Shroombino Seed", "Shroombino")
 
 -- ========================
--- Tab 3: Auto Collect
+-- Auto Collect (OFF mặc định)
 -- ========================
 local CollectTab = Window:CreateTab("Auto Collect", "dollar-sign")
 local collectDelay = 3
@@ -130,21 +109,19 @@ CollectTab:CreateSlider({
     Callback = function(v) collectDelay = v end
 })
 
-local autoCollect = true
+local autoCollect = false
 CollectTab:CreateToggle({
     Name = "Auto Collect Money",
-    CurrentValue = true,
+    CurrentValue = false,
     Flag = "AutoCollect",
     Callback = function(state)
         autoCollect = state
         if state then
             task.spawn(function()
                 while autoCollect do
-                    if Remotes and Remotes:FindFirstChild("EquipBestBrainrots") then
-                        pcall(function()
-                            Remotes.EquipBestBrainrots:FireServer()
-                        end)
-                    end
+                    pcall(function()
+                        Remotes.EquipBestBrainrots:FireServer()
+                    end)
                     task.wait(collectDelay)
                 end
             end)
@@ -152,113 +129,50 @@ CollectTab:CreateToggle({
     end
 })
 
--- Auto bật collect luôn khi load
-task.spawn(function()
-    while autoCollect do
-        if Remotes and Remotes:FindFirstChild("EquipBestBrainrots") then
-            pcall(function()
-                Remotes.EquipBestBrainrots:FireServer()
-            end)
-        end
-        task.wait(collectDelay)
-    end
-end)
-
 -- ========================
--- Tab 4: Buy Shop Gear
+-- Buy Gear (ALL ON)
 -- ========================
 local GearTab = Window:CreateTab("Buy Shop Gear", "shopping-cart")
 local autoBuyGear = {}
-local function AddGearToggle(gearName, displayName, default)
-    autoBuyGear[gearName] = default or false
+local function AddGearToggle(gearName, displayName)
+    autoBuyGear[gearName] = true
     GearTab:CreateToggle({
-        Name = displayName or gearName,
-        CurrentValue = default or false,
+        Name = displayName,
+        CurrentValue = true,
         Flag = "Gear_" .. gearName,
         Callback = function(state)
             autoBuyGear[gearName] = state
             if state then
                 task.spawn(function()
                     while autoBuyGear[gearName] do
-                        if Remotes and Remotes:FindFirstChild("BuyGear") then
-                            pcall(function()
-                                Remotes.BuyGear:FireServer(unpack({gearName}))
-                            end)
-                        end
+                        pcall(function()
+                            Remotes.BuyGear:FireServer(gearName)
+                        end)
                         task.wait(0.001)
                     end
                 end)
             end
         end
     })
-
-    -- Auto bật khi load
-    if default then
-        task.spawn(function()
-            task.wait(1)
-            autoBuyGear[gearName] = true
-            while autoBuyGear[gearName] do
-                if Remotes and Remotes:FindFirstChild("BuyGear") then
-                    pcall(function()
-                        Remotes.BuyGear:FireServer(unpack({gearName}))
-                    end)
-                end
-                task.wait(0.001)
-            end
-        end)
-    end
+    -- Auto bật
+    task.spawn(function()
+        task.wait(1)
+        while autoBuyGear[gearName] do
+            pcall(function()
+                Remotes.BuyGear:FireServer(gearName)
+            end)
+            task.wait(0.001)
+        end
+    end)
 end
 
--- Gear all auto ON
-AddGearToggle("Water Bucket", "Water Bucket", true)
-AddGearToggle("Frost Grenade", "Frost Grenade", true)
-AddGearToggle("Banana Gun", "Banana Gun", true)
-AddGearToggle("Frost Blower", "Frost Blower", true)
+AddGearToggle("Water Bucket", "Water Bucket")
+AddGearToggle("Frost Grenade", "Frost Grenade")
+AddGearToggle("Banana Gun", "Banana Gun")
+AddGearToggle("Frost Blower", "Frost Blower")
 
 -- ========================
--- Tab 5: Fix Lag
--- ========================
-local FixLagTab = Window:CreateTab("Fix Lag", "zap")
-
-FixLagTab:CreateButton({
-    Name = "✨ Fix Lag",
-    Callback = function()
-        local character = player.Character or player.CharacterAdded:Wait()
-        local root = character:WaitForChild("HumanoidRootPart")
-
-        local fixPart = Instance.new("Part")
-        fixPart.Name = "LagFixPart"
-        fixPart.Size = Vector3.new(2, 2, 2)
-        fixPart.Position = root.Position + Vector3.new(0, 5, 0)
-        fixPart.Anchored = true
-        fixPart.CanCollide = false
-        fixPart.Transparency = 0.5
-        fixPart.Color = Color3.fromRGB(255, 255, 200)
-
-        local glow = Instance.new("PointLight")
-        glow.Brightness = 3
-        glow.Range = 15
-        glow.Color = Color3.fromRGB(255, 255, 150)
-        glow.Parent = fixPart
-
-        fixPart.Parent = workspace
-
-        game:GetService("TweenService"):Create(
-            fixPart,
-            TweenInfo.new(1, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
-            { Position = fixPart.Position + Vector3.new(0, 50, 0) }
-        ):Play()
-
-        task.delay(1.2, function()
-            if fixPart and fixPart.Parent then
-                fixPart:Destroy()
-            end
-        end)
-    end
-})
-
--- ========================
--- Mobile Toggle Button
+-- Mobile Menu Button
 -- ========================
 local UIS = game:GetService("UserInputService")
 local mobileGui = Instance.new("ScreenGui")
@@ -279,28 +193,3 @@ btn.Parent = mobileGui
 btn.MouseButton1Click:Connect(function()
     Rayfield:SetVisibility(not Rayfield:IsVisible())
 end)
-
--- Drag move
-local dragging, dragStart, startPos
-btn.InputBegan:Connect(function(input)
-    if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
-        dragging = true
-        dragStart = input.Position
-        startPos = btn.Position
-        input.Changed:Connect(function()
-            if input.UserInputState == Enum.UserInputState.End then dragging = false end
-        end)
-    end
-end)
-
-UIS.InputChanged:Connect(function(input)
-    if input.UserInputType == Enum.UserInputType.MouseMovement and dragging then
-        local delta = input.Position - dragStart
-        btn.Position = UDim2.new(
-            startPos.X.Scale, startPos.X.Offset + delta.X,
-            startPos.Y.Scale, startPos.Y.Offset + delta.Y
-        )
-    end
-end)
-
-warn("✅ SDVT Rayfield Script loaded! Auto All Features Enabled!")
