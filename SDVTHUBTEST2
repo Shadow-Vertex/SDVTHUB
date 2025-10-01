@@ -19,10 +19,10 @@ local Window = Rayfield:CreateWindow({
     ConfigurationSaving = {
         Enabled = true,
         FolderName = "SDVT",
-        FileName = "SAVINGSDVTSCRIPT"
+        FileName = "SAVINGSDVTSCRIPT",
+        JSONEncode = true
     }
 })
-
 -- Auto load config
 pcall(function()
     Rayfield:LoadConfiguration()
